@@ -1,0 +1,121 @@
+apiVersion: flux.weave.works/v1beta1
+kind: HelmRelease
+metadata:
+  name: cfrm
+  namespace: demo
+spec:
+  releaseName: cfrm
+  chart:
+    git: ssh://git@stash.saas-p.com:7999/cfrm/cfrm-ic-gitops.git
+    path: charts/cfrm-ic
+    ref: nonprod
+  values:
+    global:
+      releasename: cfrm 
+      namespace: demo
+      registryServer: IL02VLAPP5004.cfrm.dev.local:5000
+      filebeat:
+        resources:
+          request:  
+            memory: 1Gi
+            cpu: 100m
+          limit:  
+            memory: 1Gi
+            cpu: 100m
+      stunnel:
+        resources:
+          request:  
+            memory: 1Gi
+            cpu: 100m
+          limit:  
+            memory: 1Gi
+            cpu: 100m    
+      artemis:
+        ingress:
+          hostname: cfrm-demo.saas-n.com
+        initContainer:
+          resources:
+            request:  
+              memory: 1Gi
+              cpu: 1000m
+            limit:  
+              memory: 1Gi
+              cpu: 1000m    
+        resources:
+          request:  
+            memory: 1Gi
+            cpu: 1000m
+          limit:  
+            memory: 4Gi
+            cpu: 2000m
+      elasticsearch:
+        ingress:
+          hostname: cfrm-demo.saas-n.com
+        initContainer:
+          resources:
+            request:  
+              memory: 1Gi
+              cpu: 1000m
+            limit:  
+              memory: 1Gi
+              cpu: 1000m 
+        resources:
+          request:  
+            memory: 4Gi
+            cpu: 1000m
+          limit:  
+            memory: 8Gi
+            cpu: 2000m
+      apacheds:
+        resources:
+          request:  
+            memory: 1Gi
+            cpu: 1000m
+          limit:  
+            memory: 4Gi
+            cpu: 1000m
+      ic:
+        db:
+          server: 10.226.190.23
+          port: 1560
+          sid: orcl
+          main:
+            username: "SAASN_MAIN"
+            password: "SAASN_MAIN"
+          jobs:
+            username: "SAASN_IJM"
+            password: "SAASN_IJM"
+          cloud:
+            username: "SAASN_CLOUD"
+            password: "SAASN_CLOUD"
+          staging:
+            username: "SAASN_STAGING"
+            password: "SAASN_STAGING"
+        version: 6000_SP1    
+        initContainer:
+          resources:
+            request:  
+              memory: 1Gi
+              cpu: 500m
+            limit:  
+              memory: 1Gi
+              cpu: 500m        
+        frontend: 
+          resources:
+            request:  
+              memory: 16Gi
+              cpu: 2000m
+            limit:  
+              memory: 24Gi
+              cpu: 4000m
+        backend: 
+          resources:
+            request:  
+              memory: 24Gi
+              cpu: 4000m
+            limit:  
+              memory: 36Gi
+              cpu: 8000m
+        ingress:
+          hostname: cfrm-demo.saas-n.com
+          backend: cfrm-demo-backend.saas-n.com
